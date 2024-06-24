@@ -127,6 +127,7 @@ tgplot1 <- function(data){
                ncol = 2, widths = c(4, 3.5))
   return(plot)
 }
+tgplot1(data)
 
 #line chart book count each day
 bookdate<-data %>%
