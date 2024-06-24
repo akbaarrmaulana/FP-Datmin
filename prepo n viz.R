@@ -93,6 +93,7 @@ grid.arrange(countplot,
 
 tgplot1 <- function(data){
   #Grafik Canceled Bookings
+  #barchart
   countplot <- ggplot(data, aes(x = booking_status, fill = booking_status)) + 
     geom_bar(fill=c("0" = "#ADD8E6", "1" = "#FF7F7F")) +
     geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.64) +
@@ -107,7 +108,7 @@ tgplot1 <- function(data){
     summarise(count = n()) %>%
     mutate(percentage = count / sum(count) * 100)
   
-  # Membuat pie chart
+  # pie chart
   piechart<-ggplot(data_summary, aes(x = "", y = percentage, fill = factor(booking_status))) +
     geom_bar(stat = "identity", width = 1) +                
     coord_polar(theta = "y") +                              
@@ -123,3 +124,31 @@ tgplot1 <- function(data){
                ncol = 2, widths = c(4, 3.5))
   return(plot)
 }
+
+#line chart book count each day
+bookdate<-data %>%
+  group_by(date,booking_status)%>%
+  summarise(count = n()) 
+ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = booking_status))+
+  geom_line() +
+  scale_color_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
+  labs(title = "Book Count Each Day by Status",
+       x = "Date",
+       y = "Count",
+       color = "Status") +
+  theme_minimal()
+
+#line chart average price per room
+ggplot(data, aes(x = date, y = avg_price_per_room)) + 
+  geom_smooth(method="auto") +
+  geom_smooth(method="lm",color="red")+
+  theme(panel.grid = element_blank(),
+        panel.background = element_blank(),
+        plot.caption = element_text(color = "#1D3557", size = 9.5),
+        axis.text = element_text(color = "#0B1F65"))+
+  labs(x = "Month", y = "Average Price per Room") +
+  ggtitle("Average Price per Room (2017-2018)") +
+  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")
+  
+  
+
