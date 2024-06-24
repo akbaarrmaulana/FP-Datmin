@@ -57,6 +57,7 @@ subset(data,is.na(date),c(arrival_year,arrival_month, arrival_date, date))
 data <- data[complete.cases(data$date), ]
 
 skim(data)
+saveRDS(data,"dataclean.rds")
 ###data telah dicleaning dan siap digunakan
 
 #EDA dan Visualisasi
@@ -89,3 +90,36 @@ piechart<-ggplot(data_summary, aes(x = "", y = percentage, fill = factor(booking
 grid.arrange(countplot, 
              piechart, 
              ncol = 2, widths = c(4, 3.5), top = "Distribution of Canceled Bookings")
+
+tgplot1 <- function(data){
+  #Grafik Canceled Bookings
+  countplot <- ggplot(data, aes(x = booking_status, fill = booking_status)) + 
+    geom_bar(fill=c("0" = "#ADD8E6", "1" = "#FF7F7F")) +
+    geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.64) +
+    theme(panel.grid = element_blank(),
+          panel.background = element_blank(),
+          plot.caption = element_text(color = "#1D3557", size = 9.5),
+          axis.text = element_text(color = "#0B1F65"))+
+    guides(fill = "none")
+  
+  data_summary <- data %>%
+    group_by(booking_status) %>%
+    summarise(count = n()) %>%
+    mutate(percentage = count / sum(count) * 100)
+  
+  # Membuat pie chart
+  piechart<-ggplot(data_summary, aes(x = "", y = percentage, fill = factor(booking_status))) +
+    geom_bar(stat = "identity", width = 1) +                
+    coord_polar(theta = "y") +                              
+    guides(fill = guide_legend(title = "Booking Status", ncol = 1)) + 
+    geom_text(aes(label = paste0(round(percentage, 2), "%")),   
+              position = position_stack(vjust = 0.5)) +     
+    theme_void() +        
+    scale_fill_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
+    theme(legend.position = "bottom")            
+  
+  plot <- grid.arrange(countplot, 
+               piechart, 
+               ncol = 2, widths = c(4, 3.5))
+  return(plot)
+}
