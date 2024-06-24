@@ -36,7 +36,7 @@ table(data$type_of_meal_plan)
 
 #Perbaikan jenis data
 ##booking status menjadi 0 1
-data$booking_status <- ifelse(data$booking_status == "booking_status", 1, 0)
+data$booking_status <- ifelse(data$booking_status == "Canceled", 1, 0)
 data$booking_status <- as.integer(data$booking_status)
 head(data["booking_status"])
 
@@ -127,7 +127,6 @@ tgplot1 <- function(data){
                ncol = 2, widths = c(4, 3.5))
   return(plot)
 }
-tgplot1(data)
 
 #line chart book count each day
 bookdate<-data %>%
@@ -145,7 +144,6 @@ ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = b
 #line chart average price per room
 ggplot(data, aes(x = date, y = avg_price_per_room)) + 
   geom_smooth(method="auto") +
-  geom_smooth(method="lm",color="red")+
   theme(panel.grid = element_blank(),
         panel.background = element_blank(),
         plot.caption = element_text(color = "#1D3557", size = 9.5),
