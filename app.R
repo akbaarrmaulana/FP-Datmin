@@ -82,7 +82,7 @@ border-top-color:#fff;
           "Each Variable",
           box(title = strong("Distribution of Canceled Bookings"), solidHeader = T,
               width = 12, 
-              plotOutput("tgplot1", height = "300px")),
+              plotOutput("tgplot1", height = "400px")),
           box(title = strong("Book Count each day"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot2", height = "300px")),
