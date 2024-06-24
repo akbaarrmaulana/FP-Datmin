@@ -2,8 +2,10 @@ library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(dashboardthemes)
+library(DT)
 
 source("prepo n viz.R")
+datak <- read.csv("Hotel Reservations.csv")
 data <- readRDS("dataclean.rds")
 
 # Header
@@ -92,15 +94,46 @@ border-top-color:#fff;
            style="text-align:center;",style = "margin-bottom:-20px;",style = "margin-top:-20px;")
       ),
       tabsetPanel(
-        tabPanel("Dataset"),
-        tabPanel("Info")
+        tabPanel("Dataset",
+                 DTOutput("dat")),
+        tabPanel("Info",
+                 fluidRow(
+                   width = 12,
+                   box(
+                     title = "Data Dictionary",
+                     solidHeader = TRUE,
+                     width = 12,
+                     HTML(
+                       "<ul>
+                        <li><b>Booking_ID:</b> Unique identifier of each booking</li>
+                        <li><b>no_of_adults:</b> Number of adults</li>
+                        <li><b>no_of_children:</b> Number of children</li>
+                        <li><b>no_of_weekend_nights:</b> Number of weekend nights (Saturday or Sunday) the guest stayed or booked to stay at the hotel</li>
+                        <li><b>no_of_week_nights:</b> Number of week nights (Monday to Friday) the guest stayed or booked to stay at the hotel</li>
+                        <li><b>type_of_meal_plan:</b> Type of meal plan booked by the customer</li>
+                        <li><b>required_car_parking_space:</b> Does the customer require a car parking space? (0 - No, 1 - Yes)</li>
+                        <li><b>room_type_reserved:</b> Type of room reserved by the customer. The values are ciphered (encoded) by INN Hotels</li>
+                        <li><b>lead_time:</b> Number of days between the date of booking and the arrival date</li>
+                        <li><b>arrival_year:</b> Year of arrival date</li>
+                        <li><b>arrival_month:</b> Month of arrival date</li>
+                        <li><b>arrival_date:</b> Date of the month</li>
+                        <li><b>market_segment_type:</b> Market segment designation</li>
+                        <li><b>repeated_guest:</b> Is the customer a repeated guest? (0 - No, 1 - Yes)</li>
+                        <li><b>no_of_previous_cancellations:</b> Number of previous bookings that were canceled by the customer prior to the current booking</li>
+                        <li><b>no_of_previous_bookings_not_canceled:</b> Number of previous bookings not canceled by the customer prior to the current booking</li>
+                        <li><b>avg_price_per_room:</b> Average price per day of the reservation; prices of the rooms are dynamic (in euros)</li>
+                        <li><b>no_of_special_requests:</b> Total number of special requests made by the customer (e.g., high floor, view from the room, etc)</li>
+                        <li><b>booking_status:</b> Flag indicating if the booking was canceled or not</li>
+                      </ul>"
+                   )
+                 ))
         )
     ),
     tabItem(
       tabName = "predict"
     )
   )
-)
+))
 
 ui <- dashboardPage(
   header = headerItem,
@@ -111,6 +144,9 @@ server <- function(input,output,session){
   output$tgplot1 <- renderPlot(
     tgplot1(data)
   )
+  
+  output$dat <- renderDT(datak)
+ 
 }
 shinyApp(ui=ui,server=server,
          options = list(launch.browser=TRUE))
