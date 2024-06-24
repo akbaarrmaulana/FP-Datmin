@@ -128,6 +128,7 @@ tgplot1 <- function(data){
   return(plot)
 }
 
+tgplot2<- function(data){
 #line chart book count each day
 bookdate<-data %>%
   group_by(date,booking_status)%>%
@@ -135,12 +136,12 @@ bookdate<-data %>%
 ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = booking_status))+
   geom_line() +
   scale_color_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
-  labs(title = "Book Count Each Day by Status",
-       x = "Date",
+  labs(x = "Date",
        y = "Count",
        color = "Status") +
-  theme_minimal()
+  theme_minimal()}
 
+tgplot3<- function(data){
 #line chart average price per room
 ggplot(data, aes(x = date, y = avg_price_per_room)) + 
   geom_smooth(method="auto") +
@@ -149,9 +150,9 @@ ggplot(data, aes(x = date, y = avg_price_per_room)) +
         plot.caption = element_text(color = "#1D3557", size = 9.5),
         axis.text = element_text(color = "#0B1F65"))+
   labs(x = "Month", y = "Average Price per Room") +
-  ggtitle("Average Price per Room (2017-2018)") +
-  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")
-  
+  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")}
+
+tgplot4<- function(data){  
 #barchart meal plan types  
 countplot <- ggplot(data, aes(x = type_of_meal_plan, fill = booking_status)) +
   geom_bar(position="dodge") +
@@ -164,11 +165,12 @@ wafflechart <- waffle(prop.table(table(data$type_of_meal_plan)) * 100,rows=11,re
   theme(legend.direction = "vertical")+
   theme(legend.spacing.y = unit(-0.5,"cm"))
 
-grid.arrange(countplot, wafflechart, ncol = 2, widths = c(2, 1),top="Distribution of Meal Plan Types by Cancellation Status")
+grid.arrange(countplot, wafflechart, ncol = 2, widths = c(2, 1),top="Distribution of Meal Plan Types by Cancellation Status")}
 
 #room types
 data$room_type_reserved <- as.factor(data$room_type_reserved)
 data$booking_status <- as.factor(data$booking_status)
+tgplot5<- function(data){
 # Create the count plot
 countplot2 <- ggplot(data, aes(x = room_type_reserved, fill = booking_status)) +
   geom_bar(position = "dodge") +
@@ -186,9 +188,9 @@ wafflechart2 <- waffle(waffle_data, rows = 11, reverse = TRUE, size = 1.5, legen
         legend.text = element_text(size = 10)) +
   guides(fill = guide_legend(override.aes = list(size = 3)))
 # Combine the plots
-grid.arrange(countplot2, wafflechart2, ncol = 2, widths = c(2, 1), top = "Distribution of Room Types Reserved by Cancellation Status")
+grid.arrange(countplot2, wafflechart2, ncol = 2, widths = c(2, 1), top = "Distribution of Room Types Reserved by Cancellation Status")}
 
-
+tgplot6<- function(data){
 #market segment
 countplot3 <- ggplot(data, aes(x = market_segment_type, fill = booking_status)) +
   geom_bar(position="dodge") +
@@ -204,9 +206,9 @@ wafflechart3 <- waffle(prop.table(table(data$market_segment_type)) * 100, rows=1
         legend.text = element_text(size = 10),
         panel.grid = element_blank())
 
-grid.arrange(countplot3, wafflechart3, ncol = 2, widths = c(2, 1),top="Distribution of Market Segments by Cancellation Status")
+grid.arrange(countplot3, wafflechart3, ncol = 2, widths = c(2, 1),top="Distribution of Market Segments by Cancellation Status")}
 
-
+tgplot7<- function(data){
 #Number of week &weekend Nights
 hist_weekend_nights <- ggplot(data) +
   geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white",fill="#E97979") +
@@ -222,8 +224,9 @@ hist_week_nights <- ggplot(data) +
   ggtitle("Distribution of Number of Week Nights") +
   theme(plot.title = element_text(size = 11))
 
-grid.arrange(hist_week_nights, hist_weekend_nights, nrow = 1)
+grid.arrange(hist_week_nights, hist_weekend_nights, nrow = 1)}
 
+tgplot8<- function(data){
 #GRAFIK Jumlah dan Kategori Pengunjung (adults and children)
 hist_adults <- ggplot(data) +
   geom_histogram(aes(x = no_of_adults),binwidth = 1,color="white",fill="#437C17") +
@@ -239,4 +242,4 @@ hist_children <- ggplot(data) +
   ggtitle("Distribution of the Number of Children") +
   theme(text=element_text(size=10))
 
-grid.arrange(hist_adults, hist_children, nrow = 1)
+grid.arrange(hist_adults, hist_children, nrow = 1)}

@@ -79,12 +79,35 @@ border-top-color:#fff;
       ),
       tabsetPanel(
         tabPanel(
-          "Target",
+          "Each Variable",
           box(title = strong("Distribution of Canceled Bookings"), solidHeader = T,
-              width = 7, 
-              plotOutput("tgplot1", height = "300px"))
+              width = 12, 
+              plotOutput("tgplot1", height = "300px")),
+          box(title = strong("Book Count each day"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot2", height = "300px")),
+          box(title = strong("Average Price per Room (2017-2018)"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot3", height = "300px")),
+          box(title = strong("Distribution of Number of Week and Weekend Nights"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot7", height = "300px")),
+          box(title = strong("Distribution of the Number of Adults and Children"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot8", height = "300px"))
         ),
-        tabPanel("B")
+        tabPanel(
+          "Group By",
+          box(title = strong("Distribution of Meal Plan Types by Cancellation Status"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot4", height = "300px")),
+          box(title = strong("Distribution of Room Types Reserved by Cancellation Status"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot5", height = "300px")),
+          box(title = strong("Distribution of Market Segments by Cancellation Status"), solidHeader = T,
+              width = 12, 
+              plotOutput("tgplot6", height = "300px"))
+          )
       )
     ),
     tabItem(
@@ -144,7 +167,27 @@ server <- function(input,output,session){
   output$tgplot1 <- renderPlot(
     tgplot1(data)
   )
-  
+  output$tgplot2 <- renderPlot(
+    tgplot2(data)
+  )
+  output$tgplot3 <- renderPlot(
+    tgplot3(data)
+  )
+  output$tgplot4 <- renderPlot(
+    tgplot4(data)
+  )
+  output$tgplot5 <- renderPlot(
+    tgplot5(data)
+  )
+  output$tgplot6 <- renderPlot(
+    tgplot6(data)
+  )
+  output$tgplot7 <- renderPlot(
+    tgplot7(data)
+  )
+  output$tgplot8 <- renderPlot(
+    tgplot8(data)
+  )
   output$dat <- renderDT(datak)
  
 }
