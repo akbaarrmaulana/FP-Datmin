@@ -210,12 +210,10 @@ tgplot6<- function(data){
   return(plot)
 }
 
-<<<<<<< HEAD
-  #Number of week &weekend Nights
-=======
+
+#Number of week &weekend Nights
 tgplot7<- function(data){
 #Number of week &weekend Nights
->>>>>>> 3a811e4dfddb811df4e75a6bb2e11245e36049cf
 hist_weekend_nights <- ggplot(data) +
   geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white",fill="#E97979") +
   labs(y = "Count", x = "") +
