@@ -149,14 +149,20 @@ border-top-color:#fff;
                         <li><b>booking_status:</b> Flag indicating if the booking was canceled or not</li>
                       </ul>"
                    )
-                 ))
+                 )
         )
-    ),
+    ))),
     tabItem(
-      tabName = "predict"
+      tabName = "predict",
+      fluidRow(
+        width = 4,
+        box(
+          numericInput("adult","No of Adult", value = NULL)
+        )
+      )
     )
   )
-))
+)
 
 ui <- dashboardPage(
   header = headerItem,
