@@ -66,7 +66,7 @@ saveRDS(data,"dataclean.rds")
 #EDA dan Visualisasi
 #Grafik booking_status Bookings
 countplot <- ggplot(data, aes(x = booking_status, fill = booking_status)) + 
-  geom_bar(fill=c("0" = "#ADD8E6", "1" = "#FF7F7F")) +
+  geom_bar(fill=c("0" = "#48cae4", "1" = "#FF7F7F")) +
   geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.64) +
   theme(panel.grid = element_blank(),
         panel.background = element_blank(),
@@ -87,7 +87,7 @@ piechart<-ggplot(data_summary, aes(x = "", y = percentage, fill = factor(booking
   geom_text(aes(label = paste0(round(percentage, 2), "%")),   
             position = position_stack(vjust = 0.5)) +     
   theme_void() +        
-  scale_fill_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
+  scale_fill_manual(values = c("0" = "#48cae4", "1" = "#FF7F7F"))+
   theme(legend.position = "bottom")            
 
 grid.arrange(countplot, 
@@ -98,7 +98,7 @@ tgplot1 <- function(data){
   #Grafik booking_status Bookings
   #barchart
   countplot <- ggplot(data, aes(x = booking_status, fill = booking_status)) + 
-    geom_bar(fill=c("0" = "#ADD8E6", "1" = "#FF7F7F")) +
+    geom_bar(fill=c("0" = "#48cae4", "1" = "#FF7F7F")) +
     geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.64) +
     theme(panel.grid = element_blank(),
           panel.background = element_blank(),
@@ -119,7 +119,7 @@ tgplot1 <- function(data){
     geom_text(aes(label = paste0(round(percentage, 2), "%")),   
               position = position_stack(vjust = 0.5)) +     
     theme_void() +        
-    scale_fill_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
+    scale_fill_manual(values = c("0" = "#48cae4", "1" = "#FF7F7F"))+
     theme(legend.position = "bottom")            
   
   plot <- grid.arrange(countplot, 
@@ -128,19 +128,20 @@ tgplot1 <- function(data){
   return(plot)
 }
 
+tgplot2<- function(data){
 #line chart book count each day
 bookdate<-data %>%
   group_by(date,booking_status)%>%
   summarise(count = n()) 
 ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = booking_status))+
   geom_line() +
-  scale_color_manual(values = c("0" = "#ADD8E6", "1" = "#FF7F7F"))+
-  labs(title = "Book Count Each Day by Status",
-       x = "Date",
+  scale_color_manual(values = c("0" = "#48cae4", "1" = "#FF7F7F"))+
+  labs(x = "Date",
        y = "Count",
        color = "Status") +
-  theme_minimal()
+  theme_minimal()}
 
+tgplot3<- function(data){
 #line chart average price per room
 ggplot(data, aes(x = date, y = avg_price_per_room)) + 
   geom_smooth(method="auto") +
@@ -149,9 +150,9 @@ ggplot(data, aes(x = date, y = avg_price_per_room)) +
         plot.caption = element_text(color = "#1D3557", size = 9.5),
         axis.text = element_text(color = "#0B1F65"))+
   labs(x = "Month", y = "Average Price per Room") +
-  ggtitle("Average Price per Room (2017-2018)") +
-  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")
-  
+  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")}
+
+tgplot4<- function(data){  
 #barchart meal plan types  
 countplot <- ggplot(data, aes(x = type_of_meal_plan, fill = booking_status)) +
   geom_bar(position="dodge") +
@@ -164,11 +165,12 @@ wafflechart <- waffle(prop.table(table(data$type_of_meal_plan)) * 100,rows=11,re
   theme(legend.direction = "vertical")+
   theme(legend.spacing.y = unit(-0.5,"cm"))
 
-grid.arrange(countplot, wafflechart, ncol = 2, widths = c(2, 1),top="Distribution of Meal Plan Types by Cancellation Status")
+grid.arrange(countplot, wafflechart, ncol = 2, widths = c(2, 1),top="Distribution of Meal Plan Types by Cancellation Status")}
 
 #room types
 data$room_type_reserved <- as.factor(data$room_type_reserved)
 data$booking_status <- as.factor(data$booking_status)
+tgplot5<- function(data){
 # Create the count plot
 countplot2 <- ggplot(data, aes(x = room_type_reserved, fill = booking_status)) +
   geom_bar(position = "dodge") +
@@ -186,28 +188,34 @@ wafflechart2 <- waffle(waffle_data, rows = 11, reverse = TRUE, size = 1.5, legen
         legend.text = element_text(size = 10)) +
   guides(fill = guide_legend(override.aes = list(size = 3)))
 # Combine the plots
-grid.arrange(countplot2, wafflechart2, ncol = 2, widths = c(2, 1), top = "Distribution of Room Types Reserved by Cancellation Status")
+grid.arrange(countplot2, wafflechart2, ncol = 2, widths = c(2, 1), top = "Distribution of Room Types Reserved by Cancellation Status")}
 
+tgplot6<- function(data){
+  #market segment
+  countplot3 <- ggplot(data, aes(x = market_segment_type, fill = booking_status)) +
+    geom_bar(position="dodge") +
+    labs(x = "", y = "", fill = "booking_status") +
+    geom_text(stat='count', aes(label=after_stat(count)),position=position_dodge(width = 0.9), vjust=-0.5,size =3.1) +
+    theme(legend.position = c(0.25, 0.98),
+          legend.justification = c(1, 1))
 
-#market segment
-countplot3 <- ggplot(data, aes(x = market_segment_type, fill = booking_status)) +
-  geom_bar(position="dodge") +
-  labs(x = "", y = "", fill = "booking_status") +
-  geom_text(stat='count', aes(label=after_stat(count)),position=position_dodge(width = 0.9), vjust=-0.5,size =3.1) +
-  theme(legend.position = c(0.25, 0.98),
-        legend.justification = c(1, 1))
+  wafflechart3 <- waffle(prop.table(table(data$market_segment_type)) * 100, rows=11, reverse = TRUE, size=1.5, legend_pos = "bottom") +
+    theme(legend.direction = "vertical",
+          legend.spacing.y = unit(-0.4,"cm"),
+          legend.title = element_blank(),
+          legend.text = element_text(size = 10),
+          panel.grid = element_blank())
 
-wafflechart3 <- waffle(prop.table(table(data$market_segment_type)) * 100, rows=11, reverse = TRUE, size=1.5, legend_pos = "bottom") +
-  theme(legend.direction = "vertical",
-        legend.spacing.y = unit(-0.4,"cm"),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 10),
-        panel.grid = element_blank())
+  plot <-grid.arrange(countplot3, wafflechart3, ncol = 2, widths = c(2, 1),top="Distribution of Market Segments by Cancellation Status")
+  return(plot)
+}
 
-grid.arrange(countplot3, wafflechart3, ncol = 2, widths = c(2, 1),top="Distribution of Market Segments by Cancellation Status")
-
-
+<<<<<<< HEAD
   #Number of week &weekend Nights
+=======
+tgplot7<- function(data){
+#Number of week &weekend Nights
+>>>>>>> 3a811e4dfddb811df4e75a6bb2e11245e36049cf
 hist_weekend_nights <- ggplot(data) +
   geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white",fill="#E97979") +
   labs(y = "Count", x = "") +
@@ -222,8 +230,9 @@ hist_week_nights <- ggplot(data) +
   ggtitle("Distribution of Number of Week Nights") +
   theme(plot.title = element_text(size = 11))
 
-grid.arrange(hist_week_nights, hist_weekend_nights, nrow = 1)
+grid.arrange(hist_week_nights, hist_weekend_nights, nrow = 1)}
 
+tgplot8<- function(data){
 #GRAFIK Jumlah dan Kategori Pengunjung (adults and children)
 hist_adults <- ggplot(data) +
   geom_histogram(aes(x = no_of_adults),binwidth = 1,color="white",fill="#437C17") +
@@ -239,4 +248,4 @@ hist_children <- ggplot(data) +
   ggtitle("Distribution of the Number of Children") +
   theme(text=element_text(size=10))
 
-grid.arrange(hist_adults, hist_children, nrow = 1)
+grid.arrange(hist_adults, hist_children, nrow = 1)}
