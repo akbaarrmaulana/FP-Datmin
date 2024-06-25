@@ -207,7 +207,7 @@ wafflechart3 <- waffle(prop.table(table(data$market_segment_type)) * 100, rows=1
 grid.arrange(countplot3, wafflechart3, ncol = 2, widths = c(2, 1),top="Distribution of Market Segments by Cancellation Status")
 
 
-#Number of week &weekend Nights
+  #Number of week &weekend Nights
 hist_weekend_nights <- ggplot(data) +
   geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white",fill="#E97979") +
   labs(y = "Count", x = "") +

@@ -3,10 +3,17 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(dashboardthemes)
 library(DT)
+library(reticulate)
 
 source("prepo n viz.R")
 datak <- read.csv("Hotel Reservations.csv")
 data <- readRDS("dataclean.rds")
+
+# Load Model
+use_python("C:\\Users\\akbar\\anaconda3\\python.exe", required = T)
+model <- import("joblib")$load("decision_tree_model.joblib")
+selector <- import("joblib")$load("feature_selector.joblib")
+label_encoders <- import("joblib")$load("label_encoders.joblib")
 
 # Header
 headerItem <- dashboardHeader(title = " ")
