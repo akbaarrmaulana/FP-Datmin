@@ -6,6 +6,11 @@ library(DT)
 
 source("prepo n viz.R")
 datak <- read.csv("Hotel Reservations.csv")
+datak <- cbind(datak[, 1:11], date = as.Date(paste(datak$arrival_date, datak$arrival_month, datak$arrival_year, sep="-"), format="%d-%m-%Y"), datak[, 12:ncol(datak)])
+##mengecek data null pada kolom date
+subset(datak,is.na(date),c(arrival_year,arrival_month, arrival_date, date))
+##data 29 Februari 2018 tidak ada pada kalendar, maka data dihapus dari original dataset
+datak <- datak[complete.cases(datak$date), ]
 data <- readRDS("dataclean.rds")
 
 # Header
@@ -80,14 +85,14 @@ border-top-color:#fff;
       tabsetPanel(
         tabPanel(
           "Each Variable",
-          box(dateRangeInput("dateRange","Select Date Range",start = min(data$date),end = max(data$date))),
+          box(dateRangeInput("dateRange","Filter by Date",start = min(data$date),end = max(data$date))),
           box(title = strong("Distribution of Canceled Bookings"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot1", height = "400px")),
           box(title = strong("Book Count each day"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot2", height = "300px")),
-          box(title = strong("Average Price per Room (2017-2018)"), solidHeader = T,
+          box(title = strong("Average Price per Room"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot3", height = "300px")),
           box(title = strong("Distribution of Number of Week and Weekend Nights"), solidHeader = T,
@@ -99,6 +104,7 @@ border-top-color:#fff;
         ),
         tabPanel(
           "Group By",
+          box(dateRangeInput("dateRange2","Filter by Date",start = min(datak$date),end = max(datak$date))),
           box(title = strong("Distribution of Meal Plan Types by Cancellation Status"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot4", height = "300px")),
@@ -188,6 +194,9 @@ server <- function(input,output,session){
   fdata <- reactive({
     data %>%
       filter(date >= input$dateRange[1] & date <= input$dateRange[2])})
+  fdatak <- reactive({
+    datak %>%
+      filter(date >= input$dateRange2[1] & date <= input$dateRange2[2])})
   output$tgplot1 <- renderPlot(
     tgplot1(fdata())
   )
@@ -198,13 +207,13 @@ server <- function(input,output,session){
     tgplot3(fdata())
   )
   output$tgplot4 <- renderPlot(
-    tgplot4(datak)
+    tgplot4(fdatak())
   )
   output$tgplot5 <- renderPlot(
-    tgplot5(datak)
+    tgplot5(fdatak())
   )
   output$tgplot6 <- renderPlot(
-    tgplot6(datak)
+    tgplot6(fdatak())
   )
   output$tgplot7 <- renderPlot(
     tgplot7(fdata())
