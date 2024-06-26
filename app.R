@@ -180,13 +180,13 @@ server <- function(input,output,session){
     tgplot3(data)
   )
   output$tgplot4 <- renderPlot(
-    tgplot4(data)
+    tgplot4(datak)
   )
   output$tgplot5 <- renderPlot(
-    tgplot5(data)
+    tgplot5(datak)
   )
   output$tgplot6 <- renderPlot(
-    tgplot6(data)
+    tgplot6(datak)
   )
   output$tgplot7 <- renderPlot(
     tgplot7(data)
