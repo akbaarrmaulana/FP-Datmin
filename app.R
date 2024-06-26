@@ -156,8 +156,10 @@ border-top-color:#fff;
       tabName = "predict",
       fluidRow(
         width = 4,
-        box(
-          numericInput("adult","No of Adult", value = NULL)
+        box(width =4,
+          numericInput("adult","No of Adult", value = NULL),
+          numericInput("childern","No of Childern", value = NULL),
+          numericInput("adult","No of Adult", value = NULL),
         )
       )
     )
