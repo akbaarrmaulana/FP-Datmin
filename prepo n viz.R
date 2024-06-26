@@ -139,7 +139,8 @@ ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = b
   labs(x = "Date",
        y = "Count",
        color = "Status") +
-  theme_minimal()}
+  theme_minimal()+
+  scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")}
 
 tgplot3<- function(data){
 #line chart average price per room
@@ -150,7 +151,7 @@ ggplot(data, aes(x = date, y = avg_price_per_room)) +
         plot.caption = element_text(color = "#1D3557", size = 9.5),
         axis.text = element_text(color = "#0B1F65"))+
   labs(x = "Month", y = "Average Price per Room") +
-  scale_x_date(date_breaks = "3 month", date_labels = "%m-%y")}
+  scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")}
 
 tgplot4<- function(data){  
 #barchart meal plan types  

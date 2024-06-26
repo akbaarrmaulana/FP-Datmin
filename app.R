@@ -80,6 +80,7 @@ border-top-color:#fff;
       tabsetPanel(
         tabPanel(
           "Each Variable",
+          box(dateRangeInput("dateRange","Select Date Range",start = min(data$date),end = max(data$date))),
           box(title = strong("Distribution of Canceled Bookings"), solidHeader = T,
               width = 12, 
               plotOutput("tgplot1", height = "400px")),
@@ -184,14 +185,17 @@ ui <- dashboardPage(
   body = bodyItem
 )
 server <- function(input,output,session){
+  fdata <- reactive({
+    data %>%
+      filter(date >= input$dateRange[1] & date <= input$dateRange[2])})
   output$tgplot1 <- renderPlot(
-    tgplot1(data)
+    tgplot1(fdata())
   )
   output$tgplot2 <- renderPlot(
-    tgplot2(data)
+    tgplot2(fdata())
   )
   output$tgplot3 <- renderPlot(
-    tgplot3(data)
+    tgplot3(fdata())
   )
   output$tgplot4 <- renderPlot(
     tgplot4(datak)
@@ -203,10 +207,10 @@ server <- function(input,output,session){
     tgplot6(datak)
   )
   output$tgplot7 <- renderPlot(
-    tgplot7(data)
+    tgplot7(fdata())
   )
   output$tgplot8 <- renderPlot(
-    tgplot8(data)
+    tgplot8(fdata())
   )
   output$dat <- renderDT(datak)
  
