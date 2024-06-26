@@ -159,7 +159,19 @@ border-top-color:#fff;
         box(width =4,
           numericInput("adult","No of Adult", value = NULL),
           numericInput("childern","No of Childern", value = NULL),
-          numericInput("adult","No of Adult", value = NULL),
+          numericInput("weekend","No of Weekend Nigths", value = NULL),
+          numericInput("week","No of Week Nigths", value = NULL),
+          selectInput("mealplan","Type of Meal Plan",c(0,1,2,3), selected = NULL),
+          selectInput("parking","Required Car Parking Space",c(0,1), selected = NULL),
+          selectInput("roomtype","Room Type Reserved",c(1,2,3,4,5,6,7), selected = NULL),
+          numericInput("leadtime","Lead Time", value = NULL),
+          dateInput("date","Arrival Date",value=NULL,format = "dd-mm-yyyy",startview = "month"),
+          selectInput("marketseg","Market Segment Type",c("Aviation","Complementary","Corporate","Offline","Online"), selected = NULL),
+          selectInput("repguest","Repeated Guest",c(0,1), selected = NULL),
+          numericInput("prev_cancel","No of Previous Cancellations", value = NULL),
+          numericInput("prev_nocancel","No of Previous Bookings not Canceled", value = NULL),
+          numericInput("price","Average Price per Room", value = NULL),
+          numericInput("request","No of Special Request", value = NULL)
         )
       )
     )
