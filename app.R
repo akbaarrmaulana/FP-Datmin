@@ -178,7 +178,8 @@ border-top-color:#fff;
           numericInput("prev_cancel","No of Previous Cancellations", value = NULL),
           numericInput("prev_nocancel","No of Previous Bookings not Canceled", value = NULL),
           numericInput("price","Average Price per Room", value = NULL),
-          numericInput("request","No of Special Request", value = NULL)
+          numericInput("request","No of Special Request", value = NULL),
+          actionButton("pred", "Predict")
         )
       )
     )
