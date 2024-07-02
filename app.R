@@ -165,16 +165,28 @@ border-top-color:#fff;
       fluidRow(
         width = 4,
         box(width =4,
+            title = "Input Data",
           numericInput("adult","No of Adult", value = NULL),
           numericInput("childern","No of Childern", value = NULL),
           numericInput("weekend","No of Weekend Nigths", value = NULL),
           numericInput("week","No of Week Nigths", value = NULL),
-          selectInput("mealplan","Type of Meal Plan",c(1,2,3,4), selected = NULL),
-          selectInput("parking","Required Car Parking Space",c(0,1), selected = NULL),
-          selectInput("roomtype","Room Type Reserved",c(1,2,3,4,5,6,7), selected = NULL),
+          selectInput("mealplan","Type of Meal Plan",c("Not Selected","Meal Plan 1",
+                                                       "Meal Plan 2","Meal Plan 3"), selected = NULL),
+          selectInput("parking","Required Car Parking Space",c("No","Yes"), selected = NULL),
+          selectInput("roomtype","Room Type Reserved",c("Room_Type 1",
+                                                        "Room_Type 2",
+                                                        "Room_Type 3",
+                                                        "Room_Type 4",
+                                                        "Room_Type 5",
+                                                        "Room_Type 6",
+                                                        "Room_Type 7"), selected = NULL),
           numericInput("leadtime","Lead Time", value = NULL),
-          selectInput("marketseg","Market Segment Type",c(1,2,3,4,5), selected = NULL),
-          selectInput("repguest","Repeated Guest",c(0,1), selected = NULL),
+          selectInput("marketseg","Market Segment Type",c("Aviation",
+                                                          "Complementary",
+                                                          "Corporate",
+                                                          "Offline",
+                                                          "Online"), selected = NULL),
+          selectInput("repguest","Repeated Guest",c("No","Yes"), selected = NULL),
           numericInput("prev_cancel","No of Previous Cancellations", value = NULL),
           numericInput("prev_nocancel","No of Previous Bookings not Canceled", value = NULL),
           numericInput("price","Average Price per Room", value = NULL),
@@ -182,9 +194,10 @@ border-top-color:#fff;
           actionButton("pred", "Predict")
         ),
         box(
-          width = 4,
+          width = 6,
           title = "Prediction Result",
-          textOutput("result")
+          textOutput("result"),
+          DTOutput("tpred")
         )
       )
     )
@@ -229,7 +242,7 @@ server <- function(input,output,session){
   )
   output$dat <- renderDT(datak)
   
-  observeEvent(input$predict, {
+  observeEvent(input$pred, {
     new_data <- data.frame(
       no_of_adults = input$adult,
       no_of_children = input$childern,
@@ -241,15 +254,35 @@ server <- function(input,output,session){
       lead_time = input$leadtime,
       market_segment_type = input$marketseg,
       repeated_guest = input$repguest,
-      no_of_previous_cancellations = input$prevcancel,
-      no_of_previous_bookings_not_canceled = input$prevnocancel,
+      no_of_previous_cancellations = input$prev_cancel,
+      no_of_previous_bookings_not_canceled = input$prev_nocancel,
       avg_price_per_room = input$price,
       no_of_special_requests = input$request
     )
-    prediction <- predict_booking_status(new_data)
-    output$result <- renderText({
-      paste("Booking Status Prediction:", ifelse(prediction == 0, "Not Canceled", "Canceled"))
-    })
+    datapred <- new_data
+    datapred$room_type_reserved <- as.numeric(factor(new_data$room_type_reserved))
+    datapred$market_segment_type <- as.numeric(factor(new_data$market_segment_type))
+    datapred$type_of_meal_plan <- gsub("Not Selected", 0, datapred$type_of_meal_plan) # Mengganti "Not Selected" dengan 0
+    datapred$type_of_meal_plan <- gsub("Meal Plan ", "", datapred$type_of_meal_plan)
+    datapred$type_of_meal_plan <- as.integer(datapred$type_of_meal_plan)
+    datapred$required_car_parking_space <- ifelse(datapred$required_car_parking_space == 'Yes', 1, 0)
+    datapred$repeated_guest <- ifelse(datapred$repeated_guest == 'Yes', 1, 0)
+    
+    if (nrow(datapred) == 1) {
+      prediction <- predict(rf_model, newdata = datapred)
+      predd <- ifelse(prediction == 0, "Not Canceled", "Canceled")
+      output$result <- renderText({
+        paste("Booking Status Prediction:", predd,"\n")
+      })
+    } else {
+      output$result <- renderText({
+        "Please fill in all input fields."
+      })
+    }
+    
+    new_data$booking_status <- predd
+    output$tpred <- renderDT(t(new_data),
+                             options = list(pageLength = 15, info = FALSE))
   })
  
 }

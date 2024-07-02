@@ -61,3 +61,27 @@ predict_booking_status <- function(user_input) {
 }
 
 str(data_model)
+
+dataa <- data.frame(
+  asa <- 1,
+  asad <- 2
+)
+dataa
+new_data <- data.frame(
+  no_of_adults = 2,
+  no_of_children = 1,
+  no_of_weekend_nights = 2,
+  no_of_week_nights = 3,
+  type_of_meal_plan = 2,
+  required_car_parking_space = 1,
+  room_type_reserved = 2,
+  lead_time = 234,
+  market_segment_type = 2,
+  repeated_guest = 1,
+  no_of_previous_cancellations = 1,
+  no_of_previous_bookings_not_canceled = 0,
+  avg_price_per_room = 200,
+  no_of_special_requests = 1
+)
+
+p <- read.csv("Hotel Reservations.csv")

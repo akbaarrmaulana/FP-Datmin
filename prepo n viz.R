@@ -279,7 +279,8 @@ data$booking_status
 # Split data into features (X) and target (y)
 X <- data %>% select(-Booking_ID, -booking_status, -arrival_date, -arrival_month, -arrival_year,-date)
 y <- data$booking_status
-dim(X)
+X$market_segment_type <- as.numeric(factor(X$market_segment_type))
+X$room_type_reserved <- as.numeric(factor(X$room_type_reserved))
 # Combine the selected features and target for modeling
 data_model <- data.frame(X, booking_status = y)
 dim(data_model)
@@ -312,3 +313,4 @@ predict_booking_status <- function(user_input) {
   pred <- ifelse(prediction==1,"Canceled","Not canceled")
   return(pred)
 }
+
