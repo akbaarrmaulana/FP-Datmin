@@ -226,14 +226,12 @@ tgplot7 <- function(data) {
     geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white", fill = "#E97979") +
     labs(y = "Count", x = "") +
     coord_cartesian(xlim = c(0, 5)) +
-    ggtitle("Distribution of Number of Weekend Nights") +
     theme(plot.title = element_text(size = 11))
   
   hist_week_nights <- ggplot(data) +
     geom_histogram(aes(x = no_of_week_nights), binwidth = 1, color = "white", fill = "#665C91") +
     labs(x = "", y = "") +
     coord_cartesian(xlim = c(0, 11)) +
-    ggtitle("Distribution of Number of Week Nights") +
     theme(plot.title = element_text(size = 11))
   
   # Convert ggplot objects to plotly objects
@@ -249,7 +247,6 @@ tgplot8<- function(data){
 hist_adults <- ggplot(data) +
   geom_histogram(aes(x = no_of_adults),binwidth = 1,color="white",fill="#437C17") +
   labs( y = "Count",x="") +
-  ggtitle("Distribution of the Number of Adults") +
   theme(text=element_text(size=10))
 
 hist_children <- ggplot(data) +
@@ -257,7 +254,6 @@ hist_children <- ggplot(data) +
   labs(x = "", y = "") +
   coord_cartesian(xlim = c(0, 3)) +
   scale_x_continuous(breaks = seq(0, 10, 1)) +
-  ggtitle("Distribution of the Number of Children") +
   theme(text=element_text(size=10))
 
 pha <- ggplotly(hist_adults)
