@@ -5,6 +5,7 @@ library(ggplot2)
 library(dplyr)
 library(gridExtra)
 library(scales)
+library(plotly)
 library(waffle)
 library(reshape2)
 library(caret)
@@ -28,7 +29,7 @@ dim(data[duplicated_rows, ])##no duplicate data
 
 #unique values
 sapply(data, function(x) length(unique(x)))
-  #for categorical data
+#for categorical data
 table(data$booking_status)
 table(data$market_segment_type)
 table(data$room_type_reserved)
@@ -58,7 +59,8 @@ head(data["date"])
 subset(data,is.na(date),c(arrival_year,arrival_month, arrival_date, date))
 ##data 29 Februari 2018 tidak ada pada kalendar, maka data dihapus dari original dataset
 data <- data[complete.cases(data$date), ]
-
+dim(data)
+str(data)
 skim(data)
 saveRDS(data,"dataclean.rds")
 ###data telah dicleaning dan siap digunakan
@@ -133,25 +135,30 @@ tgplot2<- function(data){
 bookdate<-data %>%
   group_by(date,booking_status)%>%
   summarise(count = n()) 
-ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = booking_status))+
-  geom_line() +
-  scale_color_manual(values = c("0" = "#48cae4", "1" = "#FF7F7F"))+
-  labs(x = "Date",
-       y = "Count",
-       color = "Status") +
-  theme_minimal()+
-  scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")}
+bd <- ggplot(bookdate,aes(x=date,y=count, color = as.factor(booking_status), group = booking_status))+
+        geom_line() +
+        scale_color_manual(values = c("0" = "#48cae4", "1" = "#FF7F7F"))+
+        labs(x = "Date",
+             y = "Count",
+             color = "Status") +
+        theme_minimal()+
+        scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")
+  
+  ggplotly(bd)
+}
 
 tgplot3<- function(data){
 #line chart average price per room
-ggplot(data, aes(x = date, y = avg_price_per_room)) + 
-  geom_smooth(method="auto") +
-  theme(panel.grid = element_blank(),
-        panel.background = element_blank(),
-        plot.caption = element_text(color = "#1D3557", size = 9.5),
-        axis.text = element_text(color = "#0B1F65"))+
-  labs(x = "Month", y = "Average Price per Room") +
-  scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")}
+pr <-   ggplot(data, aes(x = date, y = avg_price_per_room)) + 
+        geom_smooth(method="auto") +
+        theme(panel.grid = element_blank(),
+              panel.background = element_blank(),
+              plot.caption = element_text(color = "#1D3557", size = 9.5),
+              axis.text = element_text(color = "#0B1F65"))+
+        labs(x = "Month", y = "Average Price per Room") +
+        scale_x_date(date_breaks = "1 month", date_labels = "%m-%y")
+  ggplotly(pr)
+}
 
 tgplot4<- function(data){  
 #barchart meal plan types  
@@ -213,23 +220,29 @@ tgplot6<- function(data){
 
 
 #Number of week &weekend Nights
-tgplot7<- function(data){
-#Number of week &weekend Nights
-hist_weekend_nights <- ggplot(data) +
-  geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white",fill="#E97979") +
-  labs(y = "Count", x = "") +
-  coord_cartesian(xlim = c(0, 5)) +
-  ggtitle("Distribution of Number of Weekend Nights") +
-  theme(plot.title = element_text(size = 11))
-
-hist_week_nights <- ggplot(data) +
-  geom_histogram(aes(x = no_of_week_nights), binwidth = 1, color = "white",fill="#665C91") +
-  labs(x = "", y = "") +
-  coord_cartesian(xlim = c(0, 11)) +
-  ggtitle("Distribution of Number of Week Nights") +
-  theme(plot.title = element_text(size = 11))
-
-grid.arrange(hist_week_nights, hist_weekend_nights, nrow = 1)}
+tgplot7 <- function(data) {
+  # Number of week & weekend Nights
+  hist_weekend_nights <- ggplot(data) +
+    geom_histogram(aes(x = no_of_weekend_nights), binwidth = 1, color = "white", fill = "#E97979") +
+    labs(y = "Count", x = "") +
+    coord_cartesian(xlim = c(0, 5)) +
+    ggtitle("Distribution of Number of Weekend Nights") +
+    theme(plot.title = element_text(size = 11))
+  
+  hist_week_nights <- ggplot(data) +
+    geom_histogram(aes(x = no_of_week_nights), binwidth = 1, color = "white", fill = "#665C91") +
+    labs(x = "", y = "") +
+    coord_cartesian(xlim = c(0, 11)) +
+    ggtitle("Distribution of Number of Week Nights") +
+    theme(plot.title = element_text(size = 11))
+  
+  # Convert ggplot objects to plotly objects
+  plotly_weekend_nights <- ggplotly(hist_weekend_nights)
+  plotly_week_nights <- ggplotly(hist_week_nights)
+  
+  # Arrange plots side by side using subplot from plotly
+  subplot(plotly_week_nights, plotly_weekend_nights, nrows = 1)
+}
 
 tgplot8<- function(data){
 #GRAFIK Jumlah dan Kategori Pengunjung (adults and children)
@@ -247,4 +260,55 @@ hist_children <- ggplot(data) +
   ggtitle("Distribution of the Number of Children") +
   theme(text=element_text(size=10))
 
-grid.arrange(hist_adults, hist_children, nrow = 1)}
+pha <- ggplotly(hist_adults)
+phc <- ggplotly(hist_children)
+subplot(pha,phc, nrows = 1)
+}
+
+
+###################
+
+# Load necessary libraries
+library(dplyr)
+library(caret)
+library(randomForest)
+
+# Read the data
+head(data)
+data$booking_status
+# Split data into features (X) and target (y)
+X <- data %>% select(-Booking_ID, -booking_status, -arrival_date, -arrival_month, -arrival_year,-date)
+y <- data$booking_status
+dim(X)
+# Combine the selected features and target for modeling
+data_model <- data.frame(X, booking_status = y)
+dim(data_model)
+# Split the data into training and testing sets
+set.seed(42)
+train_indices <- createDataPartition(data_model$booking_status, p = 0.8, list = FALSE)
+train_data <- data_model[train_indices, ]
+test_data <- data_model[-train_indices, ]
+
+# Verify the dimensions of the train and test sets
+dim(train_data)
+dim(test_data)
+
+rf_model <- randomForest(booking_status ~ ., data = train_data)
+rf_predictions <- predict(rf_model, newdata = test_data)
+
+confusionMatrix(rf_predictions, test_data$booking_status)
+
+
+
+predict_booking_status <- function(user_input) {
+  user_input_df <- as.data.frame(t(user_input))
+  colnames(user_input_df) <- colnames(X)
+  
+  user_input_df <- user_input_df %>%
+    mutate(across(where(is.numeric), as.numeric))
+  
+  prediction <- predict(rf_model, newdata = user_input_df)
+  
+  pred <- ifelse(prediction==1,"Canceled","Not canceled")
+  return(pred)
+}

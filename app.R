@@ -3,6 +3,7 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(dashboardthemes)
 library(DT)
+library(plotly)
 
 source("prepo n viz.R")
 datak <- read.csv("Hotel Reservations.csv")
@@ -91,16 +92,16 @@ border-top-color:#fff;
               plotOutput("tgplot1", height = "400px")),
           box(title = strong("Book Count each day"), solidHeader = T,
               width = 12, 
-              plotOutput("tgplot2", height = "300px")),
+              plotlyOutput("tgplot2", height = "300px")),
           box(title = strong("Average Price per Room"), solidHeader = T,
               width = 12, 
-              plotOutput("tgplot3", height = "300px")),
+              plotlyOutput("tgplot3", height = "300px")),
           box(title = strong("Distribution of Number of Week and Weekend Nights"), solidHeader = T,
               width = 12, 
-              plotOutput("tgplot7", height = "300px")),
+              plotlyOutput("tgplot7", height = "300px")),
           box(title = strong("Distribution of the Number of Adults and Children"), solidHeader = T,
               width = 12, 
-              plotOutput("tgplot8", height = "300px"))
+              plotlyOutput("tgplot8", height = "300px"))
         ),
         tabPanel(
           "Group By",
@@ -168,18 +169,22 @@ border-top-color:#fff;
           numericInput("childern","No of Childern", value = NULL),
           numericInput("weekend","No of Weekend Nigths", value = NULL),
           numericInput("week","No of Week Nigths", value = NULL),
-          selectInput("mealplan","Type of Meal Plan",c(0,1,2,3), selected = NULL),
+          selectInput("mealplan","Type of Meal Plan",c(1,2,3,4), selected = NULL),
           selectInput("parking","Required Car Parking Space",c(0,1), selected = NULL),
           selectInput("roomtype","Room Type Reserved",c(1,2,3,4,5,6,7), selected = NULL),
           numericInput("leadtime","Lead Time", value = NULL),
-          dateInput("date","Arrival Date",value=NULL,format = "dd-mm-yyyy",startview = "month"),
-          selectInput("marketseg","Market Segment Type",c("Aviation","Complementary","Corporate","Offline","Online"), selected = NULL),
+          selectInput("marketseg","Market Segment Type",c(1,2,3,4,5), selected = NULL),
           selectInput("repguest","Repeated Guest",c(0,1), selected = NULL),
           numericInput("prev_cancel","No of Previous Cancellations", value = NULL),
           numericInput("prev_nocancel","No of Previous Bookings not Canceled", value = NULL),
           numericInput("price","Average Price per Room", value = NULL),
           numericInput("request","No of Special Request", value = NULL),
           actionButton("pred", "Predict")
+        ),
+        box(
+          width = 4,
+          title = "Prediction Result",
+          textOutput("result")
         )
       )
     )
@@ -201,10 +206,10 @@ server <- function(input,output,session){
   output$tgplot1 <- renderPlot(
     tgplot1(fdata())
   )
-  output$tgplot2 <- renderPlot(
+  output$tgplot2 <- renderPlotly(
     tgplot2(fdata())
   )
-  output$tgplot3 <- renderPlot(
+  output$tgplot3 <- renderPlotly(
     tgplot3(fdata())
   )
   output$tgplot4 <- renderPlot(
@@ -216,13 +221,36 @@ server <- function(input,output,session){
   output$tgplot6 <- renderPlot(
     tgplot6(fdatak())
   )
-  output$tgplot7 <- renderPlot(
+  output$tgplot7 <- renderPlotly(
     tgplot7(fdata())
   )
-  output$tgplot8 <- renderPlot(
+  output$tgplot8 <- renderPlotly(
     tgplot8(fdata())
   )
   output$dat <- renderDT(datak)
+  
+  observeEvent(input$predict, {
+    new_data <- data.frame(
+      no_of_adults = input$adult,
+      no_of_children = input$childern,
+      no_of_weekend_nights = input$weekend,
+      no_of_week_nights = input$week,
+      type_of_meal_plan = input$mealplan,
+      required_car_parking_space = input$parking,
+      room_type_reserved = input$roomtype,
+      lead_time = input$leadtime,
+      market_segment_type = input$marketseg,
+      repeated_guest = input$repguest,
+      no_of_previous_cancellations = input$prevcancel,
+      no_of_previous_bookings_not_canceled = input$prevnocancel,
+      avg_price_per_room = input$price,
+      no_of_special_requests = input$request
+    )
+    prediction <- predict_booking_status(new_data)
+    output$result <- renderText({
+      paste("Booking Status Prediction:", ifelse(prediction == 0, "Not Canceled", "Canceled"))
+    })
+  })
  
 }
 shinyApp(ui=ui,server=server,
