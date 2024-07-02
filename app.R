@@ -19,6 +19,7 @@ headerItem <- dashboardHeader(title = " ")
 # Sidebar
 sidebarItem <- dashboardSidebar(
   sidebarMenu(
+    menuItem("Home", tabName = "Home", icon = icon("house")),
     menuItem("EDA", tabName = "EDA", icon = icon("magnifying-glass-chart")),
     menuItem("Dataset", tabName = "data", icon = icon("hotel")),
     menuItem("Prediction", tabName = "predict", icon = icon("tree"))
@@ -78,6 +79,30 @@ border-top-color:#fff;
      ')),
   shinyDashboardThemes("onenote"),
   tabItems(
+    tabItem(tabName = "Home",
+            titlePanel(
+              h1(strong("Dashboard Data Hotel Reservation"),
+                 style="text-align:center;",style = "margin-bottom:-20px;",style = "margin-top:-20px;")),
+            br(),
+            carousel(width = 12,
+                     id = "mycarousel",
+                     carouselItem(
+                       tags$img(src = "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/10/e2/a0/artotel-ts-suites-surabaya.jpg?w=1200&h=-1&s=1")
+                     ),
+                     carouselItem(
+                       tags$img(src = "https://backend.parador-hotels.com/wp-content/uploads/2023/04/Apakah-di-Hotel-ada-Restoran.webp")
+                     ),
+                     carouselItem(
+                       tags$img(src = "https://gudeg.net/cni-content/uploads/modules/posts/20170408082028.png")
+                     )
+                     ),
+            br(),
+            tags$div(
+              style = "text-align:center;",
+              tags$p("The online hotel reservation channels have dramatically changed booking possibilities and customers’ behavior. A significant number of hotel reservations are called-off due to cancellations or no-shows. The typical reasons for cancellations include change of plans, scheduling conflicts, etc. This is often made easier by the option to do so free of charge or preferably at a low cost which is beneficial to hotel guests but it is a less desirable and possibly revenue-diminishing factor for hotels to deal with."),
+              tags$p("Can you predict if the customer is going to honor the reservation or cancel it?")
+            )
+            ),
     tabItem(tabName = "EDA",
       titlePanel(
         h1(strong("Hotel Reservations EDA"),
